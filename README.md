@@ -13,3 +13,4 @@ Environment variables
 *  `MMS_CHECK_SSL_CERTS` (boolean, default: `true`) Whether to check SSL certificates
 
 
+`docker run -d --restart="always" -h $(hostname) --env="MMS_API_KEY=YOUR_API_KEY"  greatcloak/docker-mms-agent`

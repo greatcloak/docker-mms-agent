@@ -31,7 +31,6 @@ set_config() {
 }
 
 set_config mmsApiKey "$MMS_API_KEY"
-set_config mmsGroupId "$MMS_GROUP_ID"
 set_config mmsBaseUrl "$MMS_SERVER"
 set_config enableMunin "$MMS_MUNIN"
 set_config sslRequireValidServerCertificates "$MMS_CHECK_SSL_CERTS"
