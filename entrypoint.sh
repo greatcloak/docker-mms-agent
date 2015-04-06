@@ -22,13 +22,18 @@ fi
 # "sed -i" can't operate on the file directly, and it tries to make a copy in the same directory, which our user can't do
 # Note this might cause problems with overriding settings as we just load a new file
 # instead of the correct config file. This may be an issue for more complicated deployments
-tmp_config="$(mktemp)"
+monitoring_config="$(mktemp)"
+cat /etc/mongodb-mms/monitoring-agent.config > "$monitoring_config"
+backup_config="$(mktemp)"
+cat /etc/mongodb-mms/backup-agent.config > "$backup_config"
+
 
 set_config() {
 	key="$1"
 	value="$2"
 	sed_escaped_value="$(echo "$value" | sed 's/[\/&]/\\&/g')"
-	sed -ri "s/^($key)[ ]*=.*$/\1 = $sed_escaped_value/" "$tmp_config"
+	sed -ri "s/^($key)[ ]*=.*$/\1 = $sed_escaped_value/" "$monitoring_config"
+	sed -ri "s/^($key)[ ]*=.*$/\1 = $sed_escaped_value/" "$backup_config"
 }
 
 set_config mmsApiKey "$MMS_API_KEY"
@@ -37,8 +42,10 @@ set_config enableMunin "$MMS_MUNIN"
 set_config sslRequireValidServerCertificates "$MMS_CHECK_SSL_CERTS"
 
 #copy the settings to both config file locations
-cat "$tmp_config" > monitoring-agent.config
-cat "$tmp_config" > backup-agent.config
-rm "$tmp_config"
+cat "$monitoring_config" > monitoring-agent.config
+rm "$monitoring_config"
+
+cat "$backup_config" > backup-agent.config
+rm "$backup_config"
 
 exec "$@"
