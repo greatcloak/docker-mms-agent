@@ -20,14 +20,15 @@ if [ ! "$MMS_API_KEY" ]; then
 fi
 
 # "sed -i" can't operate on the file directly, and it tries to make a copy in the same directory, which our user can't do
-config_tmp="$(mktemp)"
-cat /etc/mongodb-mms/monitoring-agent.config > "$config_tmp"
+# Note this might cause problems with overriding settings as we just load a new file
+# instead of the correct config file. This may be an issue for more complicated deployments
+tmp_config="$(mktemp)"
 
 set_config() {
 	key="$1"
 	value="$2"
 	sed_escaped_value="$(echo "$value" | sed 's/[\/&]/\\&/g')"
-	sed -ri "s/^($key)[ ]*=.*$/\1 = $sed_escaped_value/" "$config_tmp"
+	sed -ri "s/^($key)[ ]*=.*$/\1 = $sed_escaped_value/" "$tmp_config"
 }
 
 set_config mmsApiKey "$MMS_API_KEY"
@@ -35,7 +36,9 @@ set_config mmsBaseUrl "$MMS_SERVER"
 set_config enableMunin "$MMS_MUNIN"
 set_config sslRequireValidServerCertificates "$MMS_CHECK_SSL_CERTS"
 
-cat "$config_tmp" > /etc/mongodb-mms/monitoring-agent.config
-rm "$config_tmp"
+#copy the settings to both config file locations
+cat "$tmp_config" > monitoring-agent.config
+cat "$tmp_config" > backup-agent.config
+rm "$tmp_config"
 
 exec "$@"
