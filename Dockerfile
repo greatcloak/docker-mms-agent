@@ -8,7 +8,7 @@ RUN dpkg -i monitor-agent.deb
 RUN rm monitor-agent.deb
 
 # Install the backup agent
-RUN curl -sSL https://cloud.mongodb.com/download/agent/backup/mongodb-mms-backup-agent_4.1.0.347-1_amd64.deb -o backup-agent.deb
+RUN curl -sSL https://cloud.mongodb.com/download/agent/backup/mongodb-mms-backup-agent_4.3.0.384-1_amd64.deb -o backup-agent.deb
 RUN dpkg -i backup-agent.deb
 RUN rm backup-agent.deb
 
